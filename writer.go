@@ -4,18 +4,23 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"fmt"
 	"io"
 )
 
-type Signer struct {
+func sign(p []byte, s []byte) string {
+	r := hmac.New(sha256.New, s)
+	r.Write(p)
+	return base64.StdEncoding.EncodeToString(r.Sum(nil))
+}
+
+type SimpleSigner struct {
 	writer io.Writer
 	secret []byte
 }
 
-func (s Signer) Write(p []byte) (n int, err error) {
-	raw := hmac.New(sha256.New, s.secret)
-	raw.Write(p)
-	mac := base64.StdEncoding.EncodeToString(raw.Sum(nil))
+func (s SimpleSigner) Write(p []byte) (n int, err error) {
+	mac := sign(p, s.secret)
 	i, err := s.writer.Write([]byte(mac))
 	if err != nil {
 		return i, err
@@ -24,6 +29,24 @@ func (s Signer) Write(p []byte) (n int, err error) {
 	return i+j, err
 }
 
-func NewSigner(w io.Writer, secret []byte) *Signer {
-	return &Signer{writer: w, secret: secret}
+func NewSimpleSigner(w io.Writer, secret []byte) io.Writer {
+	return &SimpleSigner{writer: w, secret: secret}
 }
+
+type IdentifiedSigner struct {
+	SimpleSigner
+	name string
+}
+
+const rid = "%v %v %v"
+func (s IdentifiedSigner) Write(p []byte) (n int, err error) {
+	mac := sign(p, s.secret)
+	
+	i, err := s.writer.Write([]byte(fmt.Sprintf(rid, mac, s.name, string(p))))
+	return i, err
+}
+
+func NewIdentifiedSigner(w io.Writer, name string, secret []byte) io.Writer {
+	return &IdentifiedSigner{SimpleSigner: SimpleSigner{writer: w, secret: secret}, name: name}
+}
+
