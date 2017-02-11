@@ -1,10 +1,10 @@
 package main
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"crypto/ecdsa"
 	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/rsa"
 	"github.com/buildertools/bigmac"
 	"log"
 	"os"
@@ -23,7 +23,6 @@ func main() {
 
 	pk, _ := rsa.GenerateKey(rand.Reader, 2048)
 	pkcs1 := bigmac.NewIdentifiedPKCS1v15Signer(os.Stdout, "generated-rsa", pk)
-
 
 	log.Println("SimpleSigner")
 	simple.Println("Everyone shares a secret.")
