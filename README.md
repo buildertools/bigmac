@@ -2,7 +2,7 @@
 
 Logs are better when you can identify the author. That is what HMAC is for. Bigmac provides a few io.Writer implementations that prepend HMAC and optionally secret identifiers (just in case you have several authors or want to rotate secrets).
 
-## A simple case
+## A Simple Case
 
 In a simple case a system might only use one secret and write to a totally different stream if the secret is changed.
 
