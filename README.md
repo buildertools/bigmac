@@ -47,12 +47,18 @@ The logged message is prepended with two single-space terminated tokens. The fir
 
 Sometimes (usually) your system needs to be able to verify the authenticity of a message without sharing a secret with the author. In those cases it is best to make use of ECDSA or RSA signatures. The ````IdentifiedPKCS1v15Signer```` and ````IdentifiedECDSASigner```` types provide such tooling.
 
+### ECDSA
+
     ecpk, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
     ecdsa1 := bigmac.NewIdentifiedECDSASigner(os.Stdout, "generated-ECDSA", ecpk)
     ident.SetOutput(ecdsa1)
     ident.Println("This uses an ECDSA signature. Pretty fancy.")
 
 Since ECDSA signatures produce two artifacts the log line is prepended with the R and S components (in that order) using standard base64 encoding. The secret name used for signing follows. All components are space delimited.
+
+    Zd1nA9bknXGNdHoXT2e7Pkx/nC7M2rc3QXCzTk6qdZQ= x3LOGbVZmjnTvJG9T6qga6x7rRDsV7XzwiiNKmrlLBQ= generated-ECDSA 2017/02/11 15:44:27 This uses an ECDSA signature. Pretty fancy.
+
+### PKCS1
 
     pk, _ := rsa.GenerateKey(rand.Reader, 2048)
     pkcs1 := bigmac.NewIdentifiedPKCS1v15Signer(os.Stdout, "generated-rsa", pk)
