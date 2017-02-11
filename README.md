@@ -42,3 +42,23 @@ The logged message is prepended with two single-space terminated tokens. The fir
     bQ75DJUKHXiah3gXulPqKncEJO0F9UzAx75+LnrW+4w= Author.1 2017/02/11 11:25:23 You can like totally trust that Author.1 created this entry.
     NFyFBZSX+Q5jcfASmIdTVn0M71EWIIBWp1GciF9knHA= Author.1 2017/02/11 11:25:23 You can be sure that nobody modified it or spoofed the identify.
     pqA8TYOqfGU/YN0ztPRj1wG3qFuTvLTtGV/na0Q1wGQ= Author.2 2017/02/11 11:25:23 Even better, when you rotate and change the key version you can still read the whole log.
+
+## Asymmetric Identities
+
+Sometimes (usually) your system needs to be able to verify the authenticity of a message without sharing a secret with the author. In those cases it is best to make use of ECDSA or RSA signatures. The ````IdentifiedPKCS1v15Signer```` and ````IdentifiedECDSASigner```` types provide such tooling.
+
+    ecpk, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+    ecdsa1 := bigmac.NewIdentifiedECDSASigner(os.Stdout, "generated-ECDSA", ecpk)
+    ident.SetOutput(ecdsa1)
+    ident.Println("This uses an ECDSA signature. Pretty fancy.")
+
+Since ECDSA signatures produce two artifacts the log line is prepended with the R and S components (in that order) using standard base64 encoding. The secret name used for signing follows. All components are space delimited.
+
+    pk, _ := rsa.GenerateKey(rand.Reader, 2048)
+    pkcs1 := bigmac.NewIdentifiedPKCS1v15Signer(os.Stdout, "generated-rsa", pk)
+    ident.SetOutput(pkcs1)
+    ident.Println("This uses PKCS1v15 with a 2048 bit key. The resulting signature is huge and takes \"forever\" to generate.")
+
+The PKCS1 signature is standard base64 encoded and prepended to the provided input. The identity of the secret follows the signature. All components are space delimited.
+
+

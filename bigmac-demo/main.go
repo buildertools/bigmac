@@ -1,6 +1,10 @@
 package main
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"github.com/buildertools/bigmac"
 	"log"
 	"os"
@@ -14,6 +18,13 @@ func main() {
 	ident := log.New(idw1, ``, log.Flags())
 	idw2 := bigmac.NewIdentifiedSigner(os.Stdout, "Author.2", []byte("This is a demo secret"))
 
+	ecpk, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	ecdsa1 := bigmac.NewIdentifiedECDSASigner(os.Stdout, "generated-ECDSA", ecpk)
+
+	pk, _ := rsa.GenerateKey(rand.Reader, 2048)
+	pkcs1 := bigmac.NewIdentifiedPKCS1v15Signer(os.Stdout, "generated-rsa", pk)
+
+
 	log.Println("SimpleSigner")
 	simple.Println("Everyone shares a secret.")
 	simple.Println("Useful in very simple scenarios.")
@@ -24,4 +35,14 @@ func main() {
 	ident.Println("You can be sure that nobody modified it or spoofed the identify.")
 	ident.SetOutput(idw2)
 	ident.Println("Even better, when you rotate and change the key version you can still read the whole log.")
+
+	log.Println("IdentifiedECDSASigner")
+	ident.SetOutput(ecdsa1)
+	ident.Println("This uses an ECDSA signature. Pretty fancy.")
+
+	log.Println("IdentifiedPKCS1v15Signer")
+	ident.SetOutput(pkcs1)
+	ident.Println("This example uses a 2048 bit RSA key and creates a PKCS1v15 signature.")
+	ident.Println("This generates a really long signature and takes a long time.")
+
 }
