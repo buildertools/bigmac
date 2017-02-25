@@ -45,7 +45,7 @@ The logged message is prepended with two single-space terminated tokens. The fir
 
 ## Asymmetric Identities
 
-Sometimes (usually) your system needs to be able to verify the authenticity of a message without sharing a secret with the author. In those cases it is best to make use of ECDSA or RSA signatures. The ````IdentifiedPKCS1v15Signer```` and ````IdentifiedECDSASigner```` types provide such tooling.
+In an ideal world your system can verify the authenticity of a message without sharing the author's secret. In those cases it is best to make use of ECDSA or RSA signatures. The ````IdentifiedPKCS1v15Signer```` and ````IdentifiedECDSASigner```` types provide such tooling.
 
 ### ECDSA
 
