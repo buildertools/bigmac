@@ -1,6 +1,6 @@
 # bigmac
 
-Logs are better when you can identify the author. That is what HMAC is for. Bigmac provides a few io.Writer implementations that prepend HMAC and optionally secret identifiers (just in case you have several authors or want to rotate secrets).
+Logs are better when you can identify the author. That is what HMAC is for. Bigmac provides a few io.Writer implementations that prepend HMAC and optionally secret identifiers (just in case you have several authors or want to rotate secrets). This package can be used just about anywhere since the builtin log package and most common logging packages (such as [Logrus](https://github.com/sirupsen/logrus)) log to io.Writer types.
 
 ## A Simple Case
 
